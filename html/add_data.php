@@ -118,20 +118,6 @@ require_jwt_user();
       }
     }
 
-    function OnQry() {
-      var url;
-      var strQry = document.getElementById("keyword").value;
-
-      if (strQry == '') {
-        alert('查詢關鍵字未輸入');
-        return;
-      }
-
-      document.qry.action = "add_data.php";
-      document.qry.submit();
-
-    }
-
     function onEdit(id) {
       alert('Success!');
       document.Main.SId.value = id;
@@ -199,7 +185,7 @@ require_jwt_user();
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.js"></script>
 
-  <script defer src="js/adddata.js?v=3"></script>
+  <script defer src="js/adddata.js?v=6"></script>
   <script type="text/javascript">
     $(function() {
       $('#datetimepicker1').datetimepicker({
@@ -207,7 +193,7 @@ require_jwt_user();
       });
     });
   </script>
-  <link href="css/mobile.css?v=9" rel="stylesheet">
+  <link href="css/mobile.css?v=15" rel="stylesheet">
 </head>
 
 <body>
@@ -240,11 +226,11 @@ require_jwt_user();
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-left" id=qry name=qry method=post>
+          <form class="navbar-form navbar-left" @submit.prevent="searchLedger">
             <div class="form-group">
-              <input name="keyword" type="text" id="keyword" class="form-control" placeholder="Search">
+              <input type="search" v-model="keyword" class="form-control" placeholder="搜尋分類、明細或備註">
             </div>
-            <button type="button" class="btn btn-default" onClick="javascript:OnQry();">搜尋</button>
+            <button type="submit" class="btn btn-default">搜尋</button>
           </form>
 
         </div><!-- /.navbar-collapse -->
@@ -253,7 +239,9 @@ require_jwt_user();
 
     <div id=Main name=Main>
       <div class="container contentwrap entry-form">
-        <div class="month-spend">本月已消費 {{ month_spend }}</div>
+        <div class="month-spend">
+          <div class="spend-total">本月已消費 {{ formatMoney(month_spend) }}</div>
+        </div>
 
         <div>
           <div class="input-group col-md-8"> <span class="input-group-addon">分類</span>
@@ -329,7 +317,6 @@ require_jwt_user();
             <a class="last micons" @click="page=pages.length">末頁</a>
           </div>
         </div>
-        <div class="searchblock" style="float:left;">搜尋<input type="text" v-model="keyword"></div>
       </div>
 
       <table class="table table-condensed table-striped table-bordered table-hover no-margin ledger-table">

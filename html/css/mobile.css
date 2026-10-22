@@ -1,5 +1,138 @@
 /* Keep a long note inside its column instead of widening the ledger. */
+.month-spend {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.month-spend .spend-total {
+  font-size: 18px;
+}
+
+.month-pie-note {
+  color: #475467;
+  margin-bottom: 12px;
+}
+
+.month-pies {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 18px 28px;
+}
+
+.month-pie {
+  text-align: center;
+}
+
+.month-pie-label {
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+
+.month-pie.is-current .month-pie-label {
+  color: #175cd3;
+  font-weight: 700;
+}
+
+.month-pie-total {
+  color: #475467;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.month-pie-chart {
+  margin: 0 auto;
+}
+
+.month-pie-empty {
+  border: 1px dashed #d0d5dd;
+  border-radius: 50%;
+}
+
+.month-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 18px 0 28px;
+}
+
+.month-legend span {
+  align-items: center;
+  display: inline-flex;
+  gap: 6px;
+}
+
+.month-legend i {
+  border-radius: 50%;
+  display: inline-block;
+  height: 10px;
+  width: 10px;
+}
+
+.listheader::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
 @media (min-width: 768px) {
+  #Main > .entry-form,
+  #Main > hr,
+  #Main > .table-responsive {
+    width: 58em;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  #Main > .entry-form {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  #Main > .entry-form > .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #Main > .entry-form > .row > [class*="col-"] {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  #Main > .entry-form .input-group.col-md-8 {
+    display: flex;
+    float: none;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 0;
+  }
+
+  #Main > .entry-form .input-group.col-md-8 > .input-group-addon,
+  #Main > .entry-form .input-group.col-md-8 > .form-control {
+    float: none;
+    width: auto;
+  }
+
+  #Main > .entry-form .input-group.col-md-8 > .form-control,
+  #Main > .entry-form .select-editable {
+    flex: 1 1 auto;
+  }
+
+  #Main > .entry-form .select-editable {
+    position: relative;
+    height: 34px;
+    border: 1px solid #ccc;
+    border-left: 0;
+  }
+
+  #Main > .entry-form .select-editable select {
+    position: relative;
+    width: 100%;
+    height: 32px;
+    padding: 6px 8px;
+  }
+
   .ledger-table {
     table-layout: fixed;
     width: 100%;
@@ -7,14 +140,14 @@
 
   .ledger-table th:nth-child(1),
   .ledger-table td:nth-child(1) {
-    width: 7.5em;
+    width: 8em;
   }
 
   .ledger-table th:nth-child(2),
   .ledger-table td:nth-child(2),
   .ledger-table th:nth-child(3),
   .ledger-table td:nth-child(3) {
-    width: 12%;
+    width: 8em;
   }
 
   .ledger-table th:nth-child(4),
@@ -22,9 +155,14 @@
     width: 6em;
   }
 
+  .ledger-table th:nth-child(5),
+  .ledger-table td:nth-child(5) {
+    width: 12em;
+  }
+
   .ledger-table th:nth-child(6),
   .ledger-table td:nth-child(6) {
-    width: 9em;
+    width: 8.5em;
     white-space: nowrap;
   }
 

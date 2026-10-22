@@ -10,6 +10,7 @@ function create_smarty_instance() {
     $s = new Smarty;
     if (!is_dir('/tmp/smarty/templates_c')) { @mkdir('/tmp/smarty/templates_c', 0777, true); }
     if (!is_dir('/tmp/smarty/cache')) { @mkdir('/tmp/smarty/cache', 0777, true); }
+    $s->setTemplateDir(__DIR__);
     $s->setCompileDir('/tmp/smarty/templates_c');
     $s->setCacheDir('/tmp/smarty/cache');
     // ensure custom plugins (paginate_*) are available on all instances

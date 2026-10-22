@@ -70,11 +70,24 @@ var app = new Vue({
     },
 
     keyword() {
-      this.getReceiveRecords(this.keyword);
+      this.searchLedger();
     },
   },
 
   methods: {
+    searchLedger: function () {
+      if (this.page !== 1) {
+        this.page = 1;
+        return;
+      }
+      this.getReceiveRecords();
+    },
+
+    formatMoney: function (value) {
+      var number = Number(value) || 0;
+      return number.toLocaleString("zh-TW", { maximumFractionDigits: 0 });
+    },
+
     setPages() {
       console.log("setPages");
       this.pages = [];
@@ -179,7 +192,8 @@ var app = new Vue({
           headers: { Authorization: `Bearer ${token}` },
         })
         .then(function (response) {
-          _this.month_spend = response.data || 0;
+          var data = response.data;
+          _this.month_spend = data && typeof data === "object" ? Number(data.spend) || 0 : Number(data) || 0;
         })
         .catch(function (error) {
           console.log(error);
