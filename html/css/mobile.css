@@ -1,3 +1,76 @@
+/* Keep a long note inside its column instead of widening the ledger. */
+@media (min-width: 768px) {
+  .ledger-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .ledger-table th:nth-child(1),
+  .ledger-table td:nth-child(1) {
+    width: 7.5em;
+  }
+
+  .ledger-table th:nth-child(2),
+  .ledger-table td:nth-child(2),
+  .ledger-table th:nth-child(3),
+  .ledger-table td:nth-child(3) {
+    width: 12%;
+  }
+
+  .ledger-table th:nth-child(4),
+  .ledger-table td:nth-child(4) {
+    width: 6em;
+  }
+
+  .ledger-table th:nth-child(6),
+  .ledger-table td:nth-child(6) {
+    width: 9em;
+    white-space: nowrap;
+  }
+
+  .ledger-table input {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ledger-table .note-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.4;
+  }
+
+  .entry-form .date-field {
+    display: flex;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .entry-form #datetimepicker1 {
+    display: flex;
+    width: auto;
+  }
+
+  .entry-form .date-field > .input-group-addon,
+  .entry-form #datetimepicker1 > .input-group-addon {
+    display: flex;
+    align-items: center;
+    float: none;
+    width: auto;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .entry-form #datetimepicker1 > .form-control {
+    flex: 0 0 12em;
+    width: 12em;
+  }
+}
+
 /* Phone layout. Desktop styles stay as they are above 768px. */
 @media (max-width: 767px) {
   body {
@@ -212,6 +285,23 @@
     flex: 0 0 4.5em;
     color: #667085;
     font-weight: 600;
+    text-align: left;
+  }
+
+  .ledger-table td.note-cell {
+    align-items: flex-start;
+  }
+
+  .ledger-table .note-text {
+    min-width: 0;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    overflow: hidden;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.4;
     text-align: left;
   }
 

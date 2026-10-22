@@ -199,7 +199,7 @@ require_jwt_user();
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.js"></script>
 
-  <script defer src="js/adddata.js"></script>
+  <script defer src="js/adddata.js?v=3"></script>
   <script type="text/javascript">
     $(function() {
       $('#datetimepicker1').datetimepicker({
@@ -207,7 +207,7 @@ require_jwt_user();
       });
     });
   </script>
-  <link href="css/mobile.css?v=4" rel="stylesheet">
+  <link href="css/mobile.css?v=9" rel="stylesheet">
 </head>
 
 <body>
@@ -280,9 +280,9 @@ require_jwt_user();
           </div>
         </div>
 
-        <div class="input-group"><span class="input-group-addon">日期</span>
+        <div class="input-group date-field"><span class="input-group-addon">日期</span>
           <div class='input-group date' id='datetimepicker1'>
-            <input type='text' class="form-control" name="txtUseDate" id="txtUseDate"  />
+            <input type='text' class="form-control" name="txtUseDate" id="txtUseDate" maxlength="10" />
             <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span> </span><span id="yesterday" class="input-group-addon" style="cursor:hand; cursor:pointer;" onClick="javascript:dday();">昨天</span>
             <span id="today" class="input-group-addon" style="cursor:hand; cursor:pointer;" onClick="javascript:today();">今天</span>
           </div>
@@ -290,11 +290,10 @@ require_jwt_user();
         </div>
 
         <div class="input-group col-md-8"><span class="input-group-addon">金額</span>
-          <input type="text" inputmode="decimal" v-model="amount" class="form-control" placeholder="請輸入金額" name="nAmount" id="nAmount" value="">
-          <span class="input-group-addon"></span>
+          <input type="text" v-model="amount" class="form-control" placeholder="請輸入金額，可計算" name="nAmount" id="nAmount" @blur="amount = evaluateAmount(amount)">
         </div>
         <div class="input-group col-md-8"><span class="input-group-addon">描述</span>
-          <input type="text" v-model="desc" class="form-control" name="strDesc" id="strDesc" placeholder="備註，可不填" value="">
+          <input type="text" v-model="desc" class="form-control" name="strDesc" id="strDesc" maxlength="200" placeholder="備註，可不填" value="">
         </div>
 
         <div class="row">
@@ -358,25 +357,25 @@ require_jwt_user();
               <div v-show="receive_record.is_edited == 1">
                 <label> {{receive_record.Class}}</label>
               </div>
-              <input name="Class" v-show="receive_record.is_edited == 0" v-model="Class" maxlength="255">
+              <input name="Class" v-show="receive_record.is_edited == 0" v-model="Class" maxlength="200">
             </td>
             <td data-label="分類">
               <div v-show="receive_record.is_edited == 1">
                 <label> {{receive_record.Item}}</label>
               </div>
-              <input name="Item" v-show="receive_record.is_edited == 0" v-model="Item" maxlength="255">
+              <input name="Item" v-show="receive_record.is_edited == 0" v-model="Item" maxlength="200">
             </td>
             <td data-label="金額">
               <div v-show="receive_record.is_edited == 1">
                 <label> {{Number(receive_record.Amount).toLocaleString()}}</label>
               </div>
-              <input name="Amount" v-show="receive_record.is_edited == 0" v-model="Amount" maxlength="10">
+              <input name="Amount" v-show="receive_record.is_edited == 0" v-model="Amount" maxlength="40" @blur="Amount = evaluateAmount(Amount)">
             </td>
-            <td data-label="備註">
+            <td class="note-cell" data-label="備註">
               <div v-show="receive_record.is_edited == 1">
-                <label> {{receive_record.Descri}}</label>
+                <label class="note-text" :title="receive_record.Descri">{{receive_record.Descri}}</label>
               </div>
-              <input name="Descri" v-show="receive_record.is_edited == 0" v-model="Descri" maxlength="255">
+              <input name="Descri" v-show="receive_record.is_edited == 0" v-model="Descri" maxlength="200">
             </td>
             <td class="row-actions" data-label="功能"><button v-show="receive_record.is_edited == 1" @click="editRow(receive_record)">修改</button>
               <button v-show="receive_record.is_edited == 1" @click="deleteRow(receive_record)">刪除</button>

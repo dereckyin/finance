@@ -145,8 +145,52 @@ function ledger_amount($value)
 function ledger_datetime($value)
 {
     $value = str_replace('/', '-', trim((string) $value));
-    if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) !== 1) {
+    if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $value, $match) !== 1) {
+        return null;
+    }
+    if (!checkdate((int) $match[2], (int) $match[3], (int) $match[1])) {
         return null;
     }
     return $value . ' 00:00:00';
+}
+
+function utf8_length($value)
+{
+    $count = preg_match_all('/./u', (string) $value, $unused);
+    return $count === false ? 0 : $count;
+}
+
+function ledger_entry($class, $item, $date, $amount, $note)
+{
+    $class = trim((string) $class);
+    $item = trim((string) $item);
+    $note = trim((string) $note);
+    $useDate = ledger_datetime($date);
+    if ($class === '' || $item === '') {
+        return array('error' => '分類和明細都要填');
+    }
+    if (utf8_length($class) > 200 || utf8_length($item) > 200) {
+        return array('error' => '分類或明細超過 200 字');
+    }
+    if (utf8_length($note) > 200) {
+        return array('error' => '備註超過 200 字');
+    }
+    if ($useDate === null) {
+        return array('error' => '請輸入正確日期，例如 2026/10/22');
+    }
+    if ($amount === '' || $amount === null || !is_numeric($amount)) {
+        return array('error' => '金額請輸入數字或算式');
+    }
+    $number = (float) $amount;
+    if (!is_finite($number) || abs($number) > 99999999.99) {
+        return array('error' => '金額超出可記錄的範圍');
+    }
+    return array(
+        'error' => null,
+        'class' => $class,
+        'item' => $item,
+        'date' => $useDate,
+        'amount' => $number * -1,
+        'note' => $note,
+    );
 }

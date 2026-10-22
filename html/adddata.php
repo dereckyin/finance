@@ -104,18 +104,18 @@ require_once "header.php";
 		}
 		
 		try {
-			$useDate = ledger_datetime($txtUseDate);
-			if ($useDate === null) {
+			$entry = ledger_entry($strClass, $strItem, $txtUseDate, $nAmount, $strDesc);
+			if ($entry['error'] !== null) {
 				return false;
 			}
 			$stmt = app_db()->prepare('INSERT INTO Detail(AccountId, Class, Item, Amount, Descri, UseDate, Need) VALUES (:id, :class, :item, :amount, :descri, :usedate, :need)');
 			$stmt->execute(array(
 				':id' => (int) $AccountId,
-				':class' => $strClass,
-				':item' => $strItem,
-				':amount' => ledger_amount($nAmount),
-				':descri' => $strDesc,
-				':usedate' => $useDate,
+				':class' => $entry['class'],
+				':item' => $entry['item'],
+				':amount' => $entry['amount'],
+				':descri' => $entry['note'],
+				':usedate' => $entry['date'],
 				':need' => 'Y',
 			));
 		}
@@ -134,17 +134,17 @@ require_once "header.php";
 		}
 		
 		try {
-			$useDate = ledger_datetime($txtUseDate);
-			if ($useDate === null) {
+			$entry = ledger_entry($strClass, $strItem, $txtUseDate, $nAmount, $strDesc);
+			if ($entry['error'] !== null) {
 				return false;
 			}
 			$stmt = app_db()->prepare('UPDATE Detail SET Class = :class, Item = :item, Amount = :amount, Descri = :descri, UseDate = :usedate WHERE AccountId = :id AND SId = :sid');
 			$stmt->execute(array(
-				':class' => $strClass,
-				':item' => $strItem,
-				':amount' => ledger_amount($nAmount),
-				':descri' => $strDesc,
-				':usedate' => $useDate,
+				':class' => $entry['class'],
+				':item' => $entry['item'],
+				':amount' => $entry['amount'],
+				':descri' => $entry['note'],
+				':usedate' => $entry['date'],
 				':id' => (int) $AccountId,
 				':sid' => (int) $SId,
 			));

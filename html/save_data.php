@@ -31,10 +31,10 @@ function adddata($AccountId, $strClass, $strItem, $txtUseDate, $nAmount, $strDes
         return false;
     }
 
-    $useDate = ledger_datetime($txtUseDate);
-    if ($useDate === null) {
+    $entry = ledger_entry($strClass, $strItem, $txtUseDate, $nAmount, $strDesc);
+    if ($entry['error'] !== null) {
         http_response_code(400);
-        echo json_encode(array('ok' => false, 'msg' => '日期格式不正確'), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('ok' => false, 'msg' => $entry['error']), JSON_UNESCAPED_UNICODE);
         exit;
     }
 
@@ -42,11 +42,11 @@ function adddata($AccountId, $strClass, $strItem, $txtUseDate, $nAmount, $strDes
         $stmt = app_db()->prepare('INSERT INTO Detail(AccountId, Class, Item, Amount, Descri, UseDate, Need) VALUES (:id, :class, :item, :amount, :descri, :usedate, :need)');
         $stmt->execute(array(
             ':id' => (int) $AccountId,
-            ':class' => $strClass,
-            ':item' => $strItem,
-            ':amount' => ledger_amount($nAmount),
-            ':descri' => $strDesc,
-            ':usedate' => $useDate,
+            ':class' => $entry['class'],
+            ':item' => $entry['item'],
+            ':amount' => $entry['amount'],
+            ':descri' => $entry['note'],
+            ':usedate' => $entry['date'],
             ':need' => 'Y',
         ));
     } catch (Throwable $e) {
@@ -65,21 +65,21 @@ function mdfdata($SId, $AccountId, $strClass, $strItem, $txtUseDate, $nAmount, $
         return false;
     }
 
-    $useDate = ledger_datetime($txtUseDate);
-    if ($useDate === null) {
+    $entry = ledger_entry($strClass, $strItem, $txtUseDate, $nAmount, $strDesc);
+    if ($entry['error'] !== null) {
         http_response_code(400);
-        echo json_encode(array('ok' => false, 'msg' => '日期格式不正確'), JSON_UNESCAPED_UNICODE);
+        echo json_encode(array('ok' => false, 'msg' => $entry['error']), JSON_UNESCAPED_UNICODE);
         exit;
     }
 
     try {
         $stmt = app_db()->prepare('UPDATE Detail SET Class = :class, Item = :item, Amount = :amount, UseDate = :usedate, Descri = :descri WHERE AccountId = :id AND SId = :sid');
         $stmt->execute(array(
-            ':class' => $strClass,
-            ':item' => $strItem,
-            ':amount' => ledger_amount($nAmount),
-            ':usedate' => $useDate,
-            ':descri' => $strDesc,
+            ':class' => $entry['class'],
+            ':item' => $entry['item'],
+            ':amount' => $entry['amount'],
+            ':usedate' => $entry['date'],
+            ':descri' => $entry['note'],
             ':id' => (int) $AccountId,
             ':sid' => (int) $SId,
         ));

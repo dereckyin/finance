@@ -102,13 +102,25 @@ var app = new Vue({
       var form_Data = new FormData();
 
       this.usedate = document.querySelector("input[id=txtUseDate]").value;
+      var entry = this.validateEntry({
+        clasify: this.clasify,
+        item: this.item,
+        date: this.usedate,
+        amount: this.amount,
+        note: this.desc,
+      });
+      if (!entry) {
+        return;
+      }
+      this.amount = entry.amount;
+      this.desc = entry.note;
 
       form_Data.append("op", "adddata");
-      form_Data.append("strClass", this.item);
-      form_Data.append("strItem", this.clasify);
-      form_Data.append("txtUseDate", this.usedate);
-      form_Data.append("nAmount", this.amount);
-      form_Data.append("strDesc", this.desc);
+      form_Data.append("strClass", entry.item);
+      form_Data.append("strItem", entry.clasify);
+      form_Data.append("txtUseDate", entry.date);
+      form_Data.append("nAmount", entry.amount);
+      form_Data.append("strDesc", entry.note);
 
       let token = localStorage.getItem("accessToken");
 
@@ -128,7 +140,8 @@ var app = new Vue({
             this.getMonthSpend();
           },
           (err) => {
-            console.log(err);
+            var msg = err.response && err.response.data && err.response.data.msg;
+            alert(msg || "儲存失敗");
           }
         )
         .finally(() => {});
@@ -302,36 +315,29 @@ var app = new Vue({
     },
 
     confirmRow: function (item) {
-      // Ajax request to write changes back to db
-      if (!this.isDate(this.UseDate) && !this.UseDate == "") {
-        alert("必須是日期 (date required)");
+      var entry = this.validateEntry({
+        clasify: this.Item,
+        item: this.Class,
+        date: this.UseDate,
+        amount: this.Amount,
+        note: this.Descri,
+      });
+      if (!entry) {
         return false;
       }
-
-      if (!this.isNumeric(this.Amount) && !this.Amount == "") {
-        alert("必須是數字 (numeric required)");
-        return false;
-      }
-
-      if (this.Item == "" || this.Class == "") {
-        alert("必須輸入");
-        return false;
-      }
+      this.Item = entry.clasify;
+      this.Class = entry.item;
+      this.Amount = entry.amount;
+      this.Descri = entry.note;
 
       let formData = new FormData();
 
-      const UseDate = this.formatDate(this.UseDate);
-      const Item = this.Item.trim();
-      const Class = this.Class.trim();
-      const Amount = this.Amount;
-      const Descri = this.Descri.trim();
-
       formData.append("op", "mdf");
-      formData.append("txtUseDate", this.formatDate(this.UseDate));
-      formData.append("strItem", Item);
-      formData.append("strClass", Class);
-      formData.append("nAmount", Amount);
-      formData.append("strDesc", Descri);
+      formData.append("txtUseDate", entry.date);
+      formData.append("strItem", entry.clasify);
+      formData.append("strClass", entry.item);
+      formData.append("nAmount", entry.amount);
+      formData.append("strDesc", entry.note);
 
       formData.append("SId", item["SId"]);
 
@@ -349,23 +355,54 @@ var app = new Vue({
         data: formData,
       })
         .then(function (response) {
-          //handle success
-
           _this.getMonthSpend();
-
-          item["UseDate"] = UseDate;
-          item["Item"] = Item;
-          item["Class"] = Class;
-          item["Amount"] = Amount;
-          item["Descri"] = Descri;
+          item["UseDate"] = entry.date;
+          item["Item"] = entry.clasify;
+          item["Class"] = entry.item;
+          item["Amount"] = entry.amount;
+          item["Descri"] = entry.note;
+          item["is_edited"] = 1;
+          _this.is_modifying = false;
         })
         .catch(function (err) {
-          //handle error
-          console.log(err);
+          var msg = err.response && err.response.data && err.response.data.msg;
+          alert(msg || "儲存失敗");
         });
+    },
 
-      item["is_edited"] = 1;
-      this.is_modifying = false;
+    validateEntry: function (fields) {
+      var clasify = String(fields.clasify == null ? "" : fields.clasify).trim();
+      var item = String(fields.item == null ? "" : fields.item).trim();
+      var date = String(fields.date == null ? "" : fields.date).trim().replace(/-/g, "/");
+      var amount = this.evaluateAmount(fields.amount);
+      var note = String(fields.note == null ? "" : fields.note).trim();
+      if (clasify === "" || item === "") {
+        alert("分類和明細都要填");
+        return null;
+      }
+      if ([...clasify].length > 200 || [...item].length > 200) {
+        alert("分類或明細超過 200 字");
+        return null;
+      }
+      if ([...note].length > 200) {
+        alert("備註超過 200 字");
+        return null;
+      }
+      if (!this.isDate(date)) {
+        alert("請輸入正確日期，例如 2026/10/22");
+        return null;
+      }
+      if (amount === "" || !this.isNumeric(amount) || Math.abs(Number(amount)) > 99999999.99) {
+        alert(amount === "" || !this.isNumeric(amount) ? "金額請輸入數字或算式" : "金額超出可記錄的範圍");
+        return null;
+      }
+      return {
+        clasify: clasify,
+        item: item,
+        date: date,
+        amount: amount,
+        note: note,
+      };
     },
 
     isDate: function (txtDate, separator) {
@@ -413,6 +450,89 @@ var app = new Vue({
 
     isNumeric: function (n) {
       return !isNaN(parseFloat(n)) && isFinite(n);
+    },
+
+    evaluateAmount: function (raw) {
+      var source = String(raw == null ? "" : raw);
+      var s = source
+        .replace(/，/g, "")
+        .replace(/,/g, "")
+        .replace(/＋/g, "+")
+        .replace(/－/g, "-")
+        .replace(/×/g, "*")
+        .replace(/÷/g, "/")
+        .replace(/\s+/g, "");
+      if (s === "" || !/[+\-*/]/.test(s) || !/^[\d+\-*/().]+$/.test(s)) {
+        return source.trim();
+      }
+      var i = 0;
+      function peek() {
+        return s.charAt(i);
+      }
+      function parseExpr() {
+        var v = parseTerm();
+        while (peek() === "+" || peek() === "-") {
+          var op = peek();
+          i++;
+          var r = parseTerm();
+          v = op === "+" ? v + r : v - r;
+        }
+        return v;
+      }
+      function parseTerm() {
+        var v = parseFactor();
+        while (peek() === "*" || peek() === "/") {
+          var op = peek();
+          i++;
+          var r = parseFactor();
+          if (op === "/" && r === 0) {
+            throw new Error("div");
+          }
+          v = op === "*" ? v * r : v / r;
+        }
+        return v;
+      }
+      function parseFactor() {
+        if (peek() === "+") {
+          i++;
+          return parseFactor();
+        }
+        if (peek() === "-") {
+          i++;
+          return -parseFactor();
+        }
+        if (peek() === "(") {
+          i++;
+          var v = parseExpr();
+          if (peek() !== ")") {
+            throw new Error("paren");
+          }
+          i++;
+          return v;
+        }
+        var start = i;
+        while (i < s.length && /[\d.]/.test(s.charAt(i))) {
+          i++;
+        }
+        if (start === i) {
+          throw new Error("num");
+        }
+        var n = Number(s.slice(start, i));
+        if (!isFinite(n)) {
+          throw new Error("num");
+        }
+        return n;
+      }
+      try {
+        var value = parseExpr();
+        if (i !== s.length || !isFinite(value)) {
+          return source.trim();
+        }
+        var text = (Math.round(value * 100) / 100).toFixed(2);
+        return text.replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
+      } catch (e) {
+        return source.trim();
+      }
     },
 
     formatDate: function (date) {
