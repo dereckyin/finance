@@ -1,0 +1,276 @@
+/* Phone layout. Desktop styles stay as they are above 768px. */
+@media (max-width: 767px) {
+  body {
+    font-size: 16px;
+  }
+
+  input,
+  select,
+  textarea,
+  .form-control {
+    font-size: 16px;
+  }
+
+  .form-control,
+  .btn,
+  .navbar-nav > li > a,
+  .input-group-addon {
+    min-height: 44px;
+  }
+
+  .btn {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  #wrap > img.img-responsive {
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+  }
+
+  .contentwrap {
+    padding-top: 12px;
+  }
+
+  .login-captcha {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .login-captcha img {
+    width: 180px;
+    height: auto;
+  }
+
+  .login-captcha .form-control {
+    width: 100%;
+    margin: 8px 0 0 !important;
+  }
+
+  .navbar-form .form-control {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .navbar-form .btn {
+    width: 100%;
+  }
+
+  .entry-form > .input-group,
+  .entry-form .input-group.col-md-8 {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    clear: both;
+  }
+
+  .entry-form > .input-group > .input-group-addon,
+  .entry-form .input-group.col-md-8 > .input-group-addon {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .entry-form .form-control,
+  .entry-form .select-editable {
+    display: block;
+    width: 100%;
+    border-radius: 0 0 4px 4px;
+  }
+
+  .select-editable {
+    position: static;
+    height: auto;
+    min-height: 44px;
+    border: 0;
+  }
+
+  .select-editable select,
+  .select-editable input {
+    position: static;
+    display: block;
+    width: 100%;
+    height: 44px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    background: #fff;
+    border-radius: 0 0 4px 4px;
+  }
+
+  #datetimepicker1 {
+    display: table;
+    width: 100%;
+  }
+
+  #datetimepicker1 > .form-control,
+  #datetimepicker1 > .input-group-addon {
+    display: table-cell;
+    float: none;
+    width: auto;
+    min-height: 44px;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  #datetimepicker1 > .form-control {
+    width: 100%;
+    text-align: left;
+  }
+
+  .entry-form .row .btn {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .month-spend {
+    margin: 4px 12px 12px;
+    padding: 12px;
+    background: #f5f8fb;
+    border-radius: 8px;
+    font-size: 18px;
+  }
+
+  .listheader {
+    padding: 0 12px 12px;
+  }
+
+  .listheader .pageblock,
+  .listheader .searchblock {
+    float: none !important;
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .listheader .searchblock input,
+  .listheader select {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 4px;
+    font-size: 16px;
+  }
+
+  .table-responsive {
+    overflow: visible;
+    border: 0;
+  }
+
+  .page-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .page-nav a,
+  .page-nav select {
+    flex: 1 1 45%;
+    min-height: 44px;
+    line-height: 42px;
+    text-align: center;
+    border: 1px solid #d0d5dd;
+    border-radius: 4px;
+    background: #fff;
+    text-decoration: none;
+  }
+
+  .ledger-table thead {
+    display: none;
+  }
+
+  .ledger-table,
+  .ledger-table tbody,
+  .ledger-table tr,
+  .ledger-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .ledger-table tr {
+    margin: 0 12px 12px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+  }
+
+  .ledger-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border: 0;
+    padding: 8px 0;
+    text-align: right;
+  }
+
+  .ledger-table td::before {
+    content: attr(data-label);
+    flex: 0 0 4.5em;
+    color: #667085;
+    font-weight: 600;
+    text-align: left;
+  }
+
+  .ledger-table td.row-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ledger-table td.row-actions::before {
+    content: none;
+  }
+
+  .ledger-table td.row-actions button {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  .spend-matrix {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-top: 8px;
+  }
+
+  .spend-matrix > .row {
+    display: table;
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
+  }
+
+  .spend-matrix .col-xs-1 {
+    display: table-cell;
+    float: none;
+    width: auto;
+    min-width: 76px;
+    padding: 10px 8px;
+    vertical-align: middle;
+  }
+
+  .chart-page .navbar-nav {
+    float: none;
+    margin: 0;
+  }
+
+  .chart-page .navbar-nav > li {
+    float: none;
+  }
+
+  .chart-page .form-inline .form-group,
+  .chart-page .form-inline .form-control,
+  .chart-page .form-inline .btn {
+    display: block;
+    width: 100%;
+    margin: 0 0 8px !important;
+  }
+
+  .chart-page #month_pie,
+  .chart-page #bar_chart,
+  .chart-page #chart1_div {
+    height: 300px !important;
+  }
+}

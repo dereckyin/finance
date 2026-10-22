@@ -1,0 +1,7 @@
+/app/vendor
+/app/*.lock
+/html/theme
+/html/templates_c
+.env
+/html/myfinance.db
+/myfinance.db.bak-*

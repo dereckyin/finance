@@ -1,0 +1,13 @@
+{
+  "name": "do-mu-oi/makeshop-smarty",
+  "require": {
+    "smarty/smarty": "^3.1",
+    "firebase/php-jwt": "^5.5"
+  },
+  "authors": [
+    {
+      "name": "do-mu-oi",
+      "email": "oi@century.co.jp"
+    }
+  ]
+}

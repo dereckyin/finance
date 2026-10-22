@@ -1,0 +1,22 @@
+@charset "utf-8";
+#wrap {
+	padding-left: 0px;
+	padding-right: 0px;
+	max-width: 1280px;
+	left: auto;
+	right: auto;
+}
+.contentwrap {
+	max-width: 1280px;
+	left: auto;
+	right: auto;
+	padding-top: 20px;
+}
+.footer_style {
+	text-align: center;
+	padding-top: 20px;
+	
+}
+.list_padding {
+	padding-top: 20px;
+}
