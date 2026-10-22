@@ -1,113 +1,29 @@
-# Smarty デザインテンプレート開発環境
+# 家庭速記簿
 
-GMO MakeShop、カラーミーショップのデザインテンプレート開発環境です。(非公式)
+個人記帳網站。帳務資料與登入金鑰不在這個倉庫裡。
 
-## セットアップ
-
-```
-$ git clone https://github.com/do-mu-oi/makeshop-smarty.git
-$ cd makeshop-smarty/
-$ docker-compose up
-```
-
-localhost:8080 でアクセス
-
-### 一部 Linux 環境で Permission Error が発生する件
-
-一部の Linux 環境ではコンテナ内の Apache 実行ユーザーをコンテナ実行ユーザーに合わせる必要があります。
+## 取得程式
 
 ```bash
-$ docker exec -it makeshop-smarty_php_1 bash
-# コンテナ実行ユーザー 1000:1000 の場合
-$ usermod -u 1000 www-data ; groupmod -g 1000 www-data ; /etc/init.d/apache2 reload
+git clone https://github.com/dereckyin/finance.git
+cd finance
 ```
 
-## ディレクトリ構成
+## 啟動
 
-`html/theme/data/`以下にデータファイル(.json)、`html/theme/templates/`以下にテンプレートファイル(.tpl)を配置します。
+在專案目錄建立 `.env`，金鑰至少 32 個字元：
 
-- html/ : Apache document root
-  - **theme/**
-    - **data/** : テンプレートから呼び出すデータ
-      - data1.json
-      - data2.json
-      - data3.json
-      - ...
-    - **templates/** : テンプレートファイル
-      - module/ : モジュール (テンプレートから`{$module.header}`等で呼び出し)
-        - header.tpl
-        - footer.tpl
-        - side_bar.tpl
-        - ...
-      - page1.tpl
-      - page2.tpl
-      - page2.tpl
-      - ...
-
-`theme/`以下のファイルには`/`以下でアクセス可能です。(例: `theme/assets/style.css` -> `/assets/style.css`)
-
-## サンプル
-
-### データファイル (html/theme/data/data.json)
-
-```json
-{
-  "page": {
-    "title": "デザインテンプレート開発環境",
-    "css": "/assets/style.css"
-  },
-  "shop": {
-    "name": "ショップ名"
-  }
-}
+```
+JWT_SECRET=請換成一組隨機字串
 ```
 
-上記pageとshopは別ファイルに分割することも出来ます。
+將資料庫放在 `html/myfinance.db`。這個檔案已從 Git 排除。
 
-#### data1.json
+安裝 PHP 相依套件後，只啟動網站服務：
 
-```json
-{
-  "page": {
-    "title": "デザインテンプレート開発環境",
-    "css": "/assets/style.css"
-  }
-}
+```bash
+docker run --rm -v ./app:/app composer:2 install --working-dir=/app
+docker compose up -d --no-deps php
 ```
 
-#### data2.json
-
-```json
-{
-  "shop": {
-    "name": "ショップ名"
-  }
-}
-```
-
-### テンプレート (html/theme/templates/top.tpl)
-
-```html
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title><{$page.title}></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="stylesheet" href="<{$page.css}>" />
-  </head>
-  <body><{$module.header}></body>
-</html>
-```
-
-### テンプレートモジュール (html/theme/templates/module/header.tpl)
-
-```html
-<h1><{$shop.name}></h1>
-```
-
-## License
-
-MIT License
-
-chmod 666 /var/www/html/myfinance.db && chmod 777 /var/www/html
+瀏覽器開啟 http://localhost:8080 。
