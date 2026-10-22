@@ -15,6 +15,7 @@ cd finance
 
 ```
 JWT_SECRET=請換成一組隨機字串
+GEMINI_API_KEY=選填，用於上傳消費截圖辨識細項
 ```
 
 安裝 PHP 相依套件後，只啟動網站服務：

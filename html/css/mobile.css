@@ -75,6 +75,77 @@
   clear: both;
 }
 
+.receipt-lines-block {
+  clear: both;
+  display: block;
+  margin: 0 0 12px;
+  width: 100%;
+}
+
+.receipt-lines-toolbar {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+
+.receipt-lines-label {
+  color: #475467;
+  flex: 0 0 auto;
+  font-size: 14px;
+}
+
+.receipt-lines-tip {
+  color: #667085;
+  flex: 1 1 12em;
+  font-size: 13px;
+  line-height: 1.4;
+  min-width: 0;
+}
+
+.row-upload-btn.disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.row-upload-btn {
+  background: #eee;
+  border: 1px solid #bbb;
+  border-radius: 2px;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 13px;
+  font-weight: normal;
+  line-height: 1.4;
+  margin: 0;
+  padding: 1px 6px;
+  vertical-align: middle;
+}
+
+.row-upload-btn.armed {
+  background: #dbeafe;
+  border-color: #175cd3;
+  color: #175cd3;
+}
+
+.receipt-lines {
+  min-height: 7.5em;
+  resize: vertical;
+}
+
+.receipt-lines-hint,
+.note-count {
+  color: #475467;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.note-count.over {
+  color: #b42318;
+}
+
 @media (min-width: 768px) {
   #Main > .entry-form,
   #Main > hr,
@@ -98,6 +169,10 @@
   #Main > .entry-form > .row > [class*="col-"] {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  #Main > .entry-form .receipt-lines-block {
+    width: 100%;
   }
 
   #Main > .entry-form .input-group.col-md-8 {
@@ -162,8 +237,17 @@
 
   .ledger-table th:nth-child(6),
   .ledger-table td:nth-child(6) {
-    width: 8.5em;
+    width: 11.5em;
     white-space: nowrap;
+  }
+
+  .ledger-table .row-actions {
+    white-space: nowrap;
+  }
+
+  .ledger-table .row-actions button,
+  .ledger-table .row-actions .row-upload-btn {
+    margin-right: 2px;
   }
 
   .ledger-table input {
@@ -276,6 +360,31 @@
     width: 100%;
     margin-bottom: 10px;
     clear: both;
+  }
+
+  .entry-form .receipt-lines-block {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .entry-form .receipt-lines-toolbar {
+    display: block;
+  }
+
+  .entry-form .receipt-lines-label,
+  .entry-form .receipt-lines-tip {
+    display: block;
+    width: 100%;
+  }
+
+  .entry-form .receipt-lines-tip {
+    margin-top: 2px;
+  }
+
+  .entry-form .receipt-lines {
+    display: block;
+    width: 100%;
   }
 
   .entry-form > .input-group > .input-group-addon,
@@ -452,9 +561,14 @@
     content: none;
   }
 
-  .ledger-table td.row-actions button {
+  .ledger-table td.row-actions button,
+  .ledger-table td.row-actions .row-upload-btn {
     flex: 1;
     min-height: 44px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .spend-matrix {

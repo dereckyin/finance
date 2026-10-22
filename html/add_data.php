@@ -185,7 +185,7 @@ require_jwt_user();
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="js/bootstrap.js"></script>
 
-  <script defer src="js/adddata.js?v=6"></script>
+  <script defer src="js/adddata.js?v=12"></script>
   <script type="text/javascript">
     $(function() {
       $('#datetimepicker1').datetimepicker({
@@ -193,7 +193,7 @@ require_jwt_user();
       });
     });
   </script>
-  <link href="css/mobile.css?v=15" rel="stylesheet">
+  <link href="css/mobile.css?v=19" rel="stylesheet">
 </head>
 
 <body>
@@ -280,9 +280,27 @@ require_jwt_user();
         <div class="input-group col-md-8"><span class="input-group-addon">金額</span>
           <input type="text" v-model="amount" class="form-control" placeholder="請輸入金額，可計算" name="nAmount" id="nAmount" @blur="amount = evaluateAmount(amount)">
         </div>
-        <div class="input-group col-md-8"><span class="input-group-addon">描述</span>
-          <input type="text" v-model="desc" class="form-control" name="strDesc" id="strDesc" maxlength="200" placeholder="備註，可不填" value="">
+
+        <div class="receipt-lines-block">
+          <div class="receipt-lines-toolbar">
+            <span class="receipt-lines-label">細項</span>
+            <span class="receipt-lines-tip">可貼上明細文字，或直接貼上截圖</span>
+          </div>
+          <textarea
+            class="form-control receipt-lines"
+            v-model="receipt_lines"
+            rows="5"
+            placeholder="貼上消費明細或截圖。例如：&#10;40 甜柿 3 入  1  129&#10;海苔  1  299"
+            @blur="applyReceiptLines"
+            @paste="onReceiptPaste"
+          ></textarea>
+          <div class="receipt-lines-hint" v-if="receipt_hint">{{ receipt_hint }}</div>
         </div>
+
+        <div class="input-group col-md-8"><span class="input-group-addon">描述</span>
+          <input type="text" v-model="desc" class="form-control" name="strDesc" id="strDesc" maxlength="200" placeholder="備註，可不填；可貼上明細自動整理" value="" @paste="onDescPaste" @blur="onDescBlur">
+        </div>
+        <div class="note-count" :class="{ over: noteLength > 200 }">備註 {{ noteLength }} / 200</div>
 
         <div class="row">
           <div class="col-md-12">
@@ -362,10 +380,21 @@ require_jwt_user();
               <div v-show="receive_record.is_edited == 1">
                 <label class="note-text" :title="receive_record.Descri">{{receive_record.Descri}}</label>
               </div>
-              <input name="Descri" v-show="receive_record.is_edited == 0" v-model="Descri" maxlength="200">
+              <input name="Descri" v-show="receive_record.is_edited == 0" v-model="Descri" maxlength="200" @paste="onDescriPaste" @blur="onDescriBlur" placeholder="可貼上明細自動整理">
             </td>
-            <td class="row-actions" data-label="功能"><button v-show="receive_record.is_edited == 1" @click="editRow(receive_record)">修改</button>
+            <td class="row-actions" data-label="功能">
+              <button v-show="receive_record.is_edited == 1" @click="editRow(receive_record)">修改</button>
               <button v-show="receive_record.is_edited == 1" @click="deleteRow(receive_record)">刪除</button>
+              <button
+                type="button"
+                v-show="receive_record.is_edited == 1"
+                class="row-upload-btn"
+                :class="{ armed: receipt_paste_sid === receive_record.SId, disabled: receipt_row_sid !== null }"
+                :disabled="receipt_row_sid !== null"
+                @click="armReceiptPaste(receive_record)"
+              >
+                {{ receipt_row_sid === receive_record.SId ? '辨識中' : (receipt_paste_sid === receive_record.SId ? '請貼上' : '貼圖') }}
+              </button>
               <button v-show="receive_record.is_edited == 0" @click="confirmRow(receive_record)">確認</button>
               <button v-show="receive_record.is_edited == 0" @click="cancelRow(receive_record)">取消</button>
             </td>
