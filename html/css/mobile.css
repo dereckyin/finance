@@ -181,6 +181,15 @@
   word-break: break-word;
 }
 
+.chart-group-toggle {
+  margin-left: 12px;
+  margin-right: 12px;
+}
+
+.chart-group-toggle .radio-inline {
+  margin-right: 12px;
+}
+
 @media (min-width: 768px) {
   #Main > .entry-form,
   #Main > hr,

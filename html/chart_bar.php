@@ -2,33 +2,45 @@
 require_once __DIR__ . '/security.php';
 $decoded = require_jwt_user();
 require_once "header.php";
-$smarty = create_smarty_instance();
 
 $AccountId = (int) $decoded->data->id;
-
-// month filter (YYYY-MM), default current month
 $ym = isset($_GET['ym']) && preg_match('/^\d{4}-\d{2}$/', $_GET['ym']) ? $_GET['ym'] : date('Y-m');
+$group = isset($_GET['group']) && $_GET['group'] === 'class' ? 'class' : 'item';
+$column = $group === 'class' ? 'Class' : 'Item';
+$groupLabel = $group === 'class' ? '明細' : '分類';
 
-// load $item and $spend for selected month only
-$items = array();
-$spend = array();
+$bars = array();
+$total = 0;
 try {
-    $ymSlash = str_replace('-', '/', $ym);
-    $rowAmounts = array();
-    foreach (db_rows("SELECT Item, sum(Amount) AS amount FROM Detail WHERE AccountId = :id AND strftime('%Y/%m', UseDate) = :ym GROUP BY Item ORDER BY Item COLLATE NOCASE", array(':id' => $AccountId, ':ym' => $ymSlash)) as $value) { $rowAmounts[$value[0]] = $value[1] * -1; }
-    // Build items list
-    $items = array_keys($rowAmounts);
-    sort($items, SORT_NATURAL | SORT_FLAG_CASE);
-    // Build spend structure expected by template
-    $spendRow = array('UseDate' => $ymSlash);
-    $subtotal = 0;
-    foreach ($items as $it) { $amt = isset($rowAmounts[$it]) ? $rowAmounts[$it] : 0; $spendRow[$it] = $amt; $subtotal += $amt; }
-    $spendRow['subtotal'] = $subtotal;
-    $spend = array($spendRow);
-} catch ( PDOException $e ) {}
+    $rows = db_rows(
+        "SELECT {$column} AS name, COALESCE(SUM(Amount) * -1, 0) AS amount
+         FROM Detail
+         WHERE AccountId = :id AND strftime('%Y-%m', UseDate) = :ym
+         GROUP BY {$column}
+         ORDER BY amount DESC, name COLLATE NOCASE",
+        array(':id' => $AccountId, ':ym' => $ym)
+    );
+    foreach ($rows as $row) {
+        $amount = (float) $row['amount'];
+        if ($amount == 0.0) {
+            continue;
+        }
+        $name = trim((string) $row['name']);
+        if ($name === '') {
+            $name = '未分類';
+        }
+        $bars[] = array(
+            'name' => $name,
+            'amount' => round($amount, 2),
+        );
+        $total += $amount;
+    }
+} catch (PDOException $e) {
+}
 
-$smarty->assign('item', array_merge(array('UseDate'), $items, array('subtotal')));
-$smarty->assign('spend', $spend);
 $smarty->assign('ym', $ym);
+$smarty->assign('group', $group);
+$smarty->assign('groupLabel', $groupLabel);
+$smarty->assign('barTotalLabel', number_format(round($total, 0), 0, '.', ','));
+$smarty->assign('barChartsJson', json_encode($bars, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT));
 $smarty->display('chart_bar.tpl');
-
