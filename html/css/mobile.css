@@ -146,6 +146,41 @@
   color: #b42318;
 }
 
+.month-detail {
+  margin: 24px 0 40px;
+}
+
+.month-detail-head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.month-detail-head h4 {
+  margin: 0;
+}
+
+.month-detail-status {
+  color: #475467;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.month-detail-table {
+  background: #fff;
+}
+
+.month-detail-table .note-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 @media (min-width: 768px) {
   #Main > .entry-form,
   #Main > hr,

@@ -54,6 +54,7 @@ for ($i = 0; $i < 7; $i++) {
         $total += $slice['amount'];
     }
     $months[] = array(
+        'ym' => $key,
         'label' => $cursor->format('Y/m'),
         'total' => round($total, 2),
         'current' => $key === $ym,

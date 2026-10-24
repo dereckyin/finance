@@ -7,10 +7,19 @@ $AccountId = (int) $decoded->data->id;
 $merged_results = array();
 
 try {
-    $stmt = app_db()->prepare('SELECT DISTINCT item FROM detail WHERE AccountId = :id ORDER BY item COLLATE NOCASE DESC');
+    $stmt = app_db()->prepare(
+        'SELECT Item
+         FROM Detail
+         WHERE AccountId = :id
+         GROUP BY Item
+         ORDER BY COUNT(*) DESC, MAX(UseDate) DESC, Item COLLATE NOCASE'
+    );
     $stmt->execute(array(':id' => $AccountId));
     foreach ($stmt as $value) {
-        $merged_results[] = $value[0];
+        $name = trim((string) $value[0]);
+        if ($name !== '') {
+            $merged_results[] = $name;
+        }
     }
 } catch (Throwable $e) {
     db_fail($e);
